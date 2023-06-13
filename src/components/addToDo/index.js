@@ -12,8 +12,11 @@ import {
     Grid,
 } from '@chakra-ui/react';
 import ArrowForwardIcon from "../../assets/icons/StarIcon";
+import { useDispatch } from 'react-redux'
+import {addToList} from "../../redux/toDo/actions";
 
 const AddToDo = () => {
+    const dispatch = useDispatch();
     const [task, setTask] = useState({ title: "", description: "" });
     const addToDoHandler = (e) => {
         let value = e.target.value;
@@ -23,9 +26,9 @@ const AddToDo = () => {
             [name]: value,
         })
     }
-    const addToDoList = () =>{
+    const addToDoListHandler = () =>{
         if(task.title.length>0){
-
+            dispatch(addToList(task))
         }
     }
     return (
@@ -44,14 +47,14 @@ const AddToDo = () => {
                     variant='outline'
                     placeholder='توضیحات'
                     size='md'
-                    value={task.title}
+                    value={task.description}
                     onChange={(e) => addToDoHandler(e)}
                 />
                 <Button
                     colorScheme='teal'
                     variant='solid'
                     rightIcon={<ArrowForwardIcon />}
-                    onClick={() => addToDoList()}
+                    onClick={() => addToDoListHandler()}
                 >
                     افزودن
                 </Button>
