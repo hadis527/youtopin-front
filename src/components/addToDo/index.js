@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import ArrowForwardIcon from "../../assets/icons/StarIcon";
 import { useDispatch } from 'react-redux'
-import {addToList} from "../../redux/toDo/actions";
+import { addToList } from "../../redux/toDo/actions";
 
 const AddToDo = () => {
     const dispatch = useDispatch();
@@ -26,9 +26,14 @@ const AddToDo = () => {
             [name]: value,
         })
     }
-    const addToDoListHandler = () =>{
-        if(task.title.length>0){
-            dispatch(addToList(task))
+    const addToDoListHandler = () => {
+        if (task.title.length > 0) {
+            dispatch(addToList({ title: task.title, description: task.description, status: false }));
+            setTask({
+                ...task,
+                title:"",
+                description:""
+            })
         }
     }
     return (
