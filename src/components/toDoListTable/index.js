@@ -18,13 +18,15 @@ import { useSelector } from 'react-redux'
 import DeleteIcon from '../../assets/icons/DeleteIcon';
 import EditIcon from '../../assets/icons/EditIcon';
 import { useDispatch } from 'react-redux'
-import { toDoListView ,deleteToDoList } from "../../redux/toDo/actions";
+import { toDoListView ,deleteToDoList,showUpdateToDoModal } from "../../redux/toDo/actions";
+import  UpdateToDo  from '../updateToDo';
 
-const ToDoListTable = () => {
+const ToDoListTable = ({mode,setMode}) => {
     const dispatch = useDispatch();
     const toast = useToast();
     const todoSate = useSelector(state => state.ToDo);
-    const { toDoList } = todoSate;
+    const { toDoList,updateToDoModal } = todoSate;
+    const [selectedTask , setSelectedTask] = useState(null);
     const tableHead = ['عنوان', 'توضیحات', 'وضعیت', 'عملیات']
     useEffect(() => {
         getToDosList();
@@ -66,9 +68,15 @@ const ToDoListTable = () => {
                 console.log(err)
             })
     }
+    const updatToDoModalHandler = (show) =>{
+        dispatch(showUpdateToDoModal( show ));
+        if(show === false){
+            setMode("add");
+        }
+    }
     return (
-        <Grid>
-            <Stack spacing={3}>
+        <>
+            <Stack spacing={3} backgroundColor='white'  p={2}>
                 <TableContainer>
                     <Table variant='simple'>
                         <TableCaption>نمایش لیست تسک ها</TableCaption>
@@ -92,7 +100,11 @@ const ToDoListTable = () => {
                                         </Td>
                                         <Td>
                                             <span onClick={() => deleteToDoListHandler(each.id)}><DeleteIcon /></span>
-                                            <EditIcon />
+                                            <span onClick={() => {
+                                                setMode("edit");
+                                                setSelectedTask(each);
+                                                updatToDoModalHandler(true)}}
+                                            ><EditIcon/></span>
                                         </Td>
                                     </Tr>
                                 )
@@ -101,7 +113,14 @@ const ToDoListTable = () => {
                     </Table>
                 </TableContainer>
             </Stack>
-        </Grid>
+            <UpdateToDo
+              isOpen={updateToDoModal}
+              onClose={updatToDoModalHandler} 
+              title={"ویرایش تسک"}
+              selectedTask={selectedTask}
+              mode={mode}
+            />
+        </>
     );
 }
 

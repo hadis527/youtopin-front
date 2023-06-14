@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    Box,
-    Text,
-    Link,
-    VStack,
-    Code,
     Button,
     Stack,
     Textarea,
     Input,
-    Grid,
     useToast
 } from '@chakra-ui/react';
 import ArrowForwardIcon from "../../assets/icons/StarIcon";
 import { useDispatch } from 'react-redux'
-import { addToDoList } from "../../redux/toDo/actions";
+import { addToDoList, updateToDoList, showUpdateToDoModal } from "../../redux/toDo/actions";
 import Axios from "axios";
 
-const AddToDo = () => {
+const AddToDo = (props) => {
+    const {mode , selectedTask} = props;
     const dispatch = useDispatch();
     const toast = useToast();
     const [task, setTask] = useState({ title: "", description: "" });
-    const addToDoHandler = (e) => {
+    useEffect(() => {
+        if(mode === "edit"){
+            setTask({
+                ...task,
+                title:selectedTask.title,
+                description:selectedTask.description
+            })
+        }
+    },[selectedTask])
+    const onchangeHandler = (e) => {
         let value = e.target.value;
         let name = e.target.name;
         setTask({
@@ -34,7 +38,7 @@ const AddToDo = () => {
             Axios({
                 method: 'post',
                 url: `http://localhost:3000/toDos`,
-                params: { title: task.title, description: task.description, status: false },
+                data: { title: task.title, description: task.description, status: false },
                 headers: {
                     Authorization: `Bearer`,
                     "content-type": "application/json",
@@ -58,18 +62,48 @@ const AddToDo = () => {
             })
         }
     }
-
-
+    const updateToDoListHandler = (id) => {
+            Axios({
+                method: 'put',
+                url: `http://localhost:3000/toDos/${id}`,
+                data: { title: task.title, description: task.description, status: false },
+                headers: {
+                    Authorization: `Bearer`,
+                    "content-type": "application/json",
+                },
+            }).then(res => {
+                dispatch(updateToDoList({id:res.data.id, title: task.title, description: task.description, status: false }));
+                toast({
+                    title: 'با موفقیت ویرایش شد',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                    position :"bottom-right"
+                  })
+            }).catch(err => {
+                console.log(err)
+            })
+        
+    }
+    const submitHandler = () =>{
+        if(mode === "add"){
+            addToDoListHandler(); 
+        }
+        else{
+            updateToDoListHandler(selectedTask.id);
+            dispatch(showUpdateToDoModal( false ));
+        }
+    }
     return (
-        <Grid>
-            <Stack spacing={3}>
+        <>
+            <Stack spacing={3} backgroundColor='white'   p={2}>
                 <Input
                     name="title"
                     variant='outline'
                     placeholder='عنوان'
                     size='md'
                     value={task.title}
-                    onChange={(e) => addToDoHandler(e)}
+                    onChange={(e) => onchangeHandler(e)}
                 />
                 <Textarea
                     name="description"
@@ -77,18 +111,18 @@ const AddToDo = () => {
                     placeholder='توضیحات'
                     size='md'
                     value={task.description}
-                    onChange={(e) => addToDoHandler(e)}
+                    onChange={(e) => onchangeHandler(e)}
                 />
                 <Button
                     colorScheme='teal'
                     variant='solid'
                     rightIcon={<ArrowForwardIcon />}
-                    onClick={() => addToDoListHandler()}
+                    onClick={() => submitHandler()}
                 >
-                    افزودن
+                    {mode === "add" ? "افزودن" : "ویرایش"}
                 </Button>
             </Stack>
-        </Grid>
+        </>
     );
 }
 
