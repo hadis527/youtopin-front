@@ -14,7 +14,7 @@ const UpadatToDo =(props) =>{
         <Modal isOpen={isOpen} onClose={() => onClose(false)}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{title}</ModalHeader>
+            <ModalHeader pt={10}>{title}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
                 <AddToDo mode={mode} selectedTask={selectedTask}/>

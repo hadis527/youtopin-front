@@ -11,7 +11,7 @@ import store from './redux/store';
 function App() {
   return (
     <Provider store={store}>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider theme={theme} direction ="rtl">
         <Dashboard />
       </ChakraProvider>
     </Provider>
