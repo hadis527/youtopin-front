@@ -1,7 +1,8 @@
 import {
     ADD_TO_DO_LIST,
     UPDATE_TO_DO_LIST,
-    DELETE_TO_DO_LIST
+    DELETE_TO_DO_LIST,
+    TO_DO_LIST
 } from './const';
 import RecordController from '../../controllers/RecordController';
 const INIT_STATE = {
@@ -9,6 +10,11 @@ const INIT_STATE = {
 };
 export default (state = INIT_STATE, action) => {
     switch (action.type) {
+        case TO_DO_LIST:
+            return {
+                ...state,
+                toDoList:  action.payload
+            }
         case ADD_TO_DO_LIST:
             return {
                 ...state,
@@ -16,8 +22,6 @@ export default (state = INIT_STATE, action) => {
                     state.toDoList,
                     action.payload
                 ),
-                showRoleDetailModal: false
-
             }
         case UPDATE_TO_DO_LIST:
             return {
@@ -26,8 +30,6 @@ export default (state = INIT_STATE, action) => {
                     state.toDoList,
                     action.payload
                 ),
-                showRoleDetailModal: false
-
             }
         case DELETE_TO_DO_LIST:
             return {
@@ -36,8 +38,6 @@ export default (state = INIT_STATE, action) => {
                     state.toDoList,
                     action.payload
                 ),
-                showRoleDetailModal: false
-
             }
         default: return { ...state };
     }

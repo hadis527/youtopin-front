@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Axios from "axios";
 import {
     Stack,
     Grid,
@@ -11,18 +12,60 @@ import {
     Td,
     TableCaption,
     TableContainer,
+    useToast 
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux'
 import DeleteIcon from '../../assets/icons/DeleteIcon';
 import EditIcon from '../../assets/icons/EditIcon';
+import { useDispatch } from 'react-redux'
+import { toDoListView ,deleteToDoList } from "../../redux/toDo/actions";
 
 const ToDoListTable = () => {
+    const dispatch = useDispatch();
+    const toast = useToast();
     const todoSate = useSelector(state => state.ToDo);
     const { toDoList } = todoSate;
     const tableHead = ['عنوان', 'توضیحات', 'وضعیت', 'عملیات']
     useEffect(() => {
+        getToDosList();
+    }, [])
+    
+    const getToDosList =() => {
+        Axios({
+            method: 'get',
+            url: `http://localhost:3000/toDos`,
+            headers: {
+                Authorization: `Bearer`,
+                "content-type": "application/json",
+            },
+        }).then(res => {
+            dispatch(toDoListView(res.data));
+        }).catch(err => {
+            console.log(err)
+        })
+    }
 
-    }, [toDoList])
+    const deleteToDoListHandler = (id) => {
+            Axios({
+                method: 'delete',
+                url: `http://localhost:3000/toDos/${id}`,
+                headers: {
+                    Authorization: `Bearer`,
+                    "content-type": "application/json",
+                },
+            }).then(res => {
+                dispatch(deleteToDoList(id));
+                toast({
+                    title: 'با موفقیت حذف شد',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                    position :"bottom-right"
+                  })
+            }).catch(err => {
+                console.log(err)
+            })
+    }
     return (
         <Grid>
             <Stack spacing={3}>
@@ -48,7 +91,7 @@ const ToDoListTable = () => {
                                             <Switch size='md' />
                                         </Td>
                                         <Td>
-                                            <DeleteIcon />
+                                            <span onClick={() => deleteToDoListHandler(each.id)}><DeleteIcon /></span>
                                             <EditIcon />
                                         </Td>
                                     </Tr>

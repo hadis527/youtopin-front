@@ -13,7 +13,7 @@ class RecordController {
   }
   delete(list, item) {
     let newList = [...list];
-    let record = newList.findIndex((each) => each.id === item.id);
+    let record = newList.findIndex((each) => each.id === item);
     newList.splice(record, 1);
     return newList;
   }

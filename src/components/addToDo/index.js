@@ -10,13 +10,16 @@ import {
     Textarea,
     Input,
     Grid,
+    useToast
 } from '@chakra-ui/react';
 import ArrowForwardIcon from "../../assets/icons/StarIcon";
 import { useDispatch } from 'react-redux'
-import { addToList } from "../../redux/toDo/actions";
+import { addToDoList } from "../../redux/toDo/actions";
+import Axios from "axios";
 
 const AddToDo = () => {
     const dispatch = useDispatch();
+    const toast = useToast();
     const [task, setTask] = useState({ title: "", description: "" });
     const addToDoHandler = (e) => {
         let value = e.target.value;
@@ -28,7 +31,26 @@ const AddToDo = () => {
     }
     const addToDoListHandler = () => {
         if (task.title.length > 0) {
-            dispatch(addToList({ title: task.title, description: task.description, status: false }));
+            Axios({
+                method: 'post',
+                url: `http://localhost:3000/toDos`,
+                params: { title: task.title, description: task.description, status: false },
+                headers: {
+                    Authorization: `Bearer`,
+                    "content-type": "application/json",
+                },
+            }).then(res => {
+                dispatch(addToDoList({id:res.data.id, title: task.title, description: task.description, status: false }));
+                toast({
+                    title: 'با موفقیت اضافه شد',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                    position :"bottom-right"
+                  })
+            }).catch(err => {
+                console.log(err)
+            })
             setTask({
                 ...task,
                 title:"",
@@ -36,6 +58,8 @@ const AddToDo = () => {
             })
         }
     }
+
+
     return (
         <Grid>
             <Stack spacing={3}>

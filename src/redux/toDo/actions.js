@@ -1,18 +1,23 @@
 import {
   ADD_TO_DO_LIST,
   UPDATE_TO_DO_LIST,
-  DELETE_TO_DO_LIST
+  DELETE_TO_DO_LIST,
+  TO_DO_LIST
 } from './const'
 
-export const addToList = (data) => ({
+export const toDoListView = (data) => ({
+  type: TO_DO_LIST,
+  payload: data
+});
+export const addToDoList = (data) => ({
   type: ADD_TO_DO_LIST,
   payload: data
 });
-export const updateToList = (data) => ({
+export const updateToDoList = (data) => ({
   type: UPDATE_TO_DO_LIST,
   payload: data
 });
-export const deleteToList = (data) => ({
+export const deleteToDoList = (data) => ({
   type: DELETE_TO_DO_LIST,
   payload: data
 })
